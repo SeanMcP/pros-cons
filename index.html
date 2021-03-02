@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pros Cons</title>
+    <link rel="stylesheet" href="./compiled.css" />
+  </head>
+  <body>
+    <main class="container mx-auto p-8">
+      <header>
+        <h1 class="text-2xl font-bold">Pros Cons</h1>
+        <p class="text-gray-500">An online tool to build pros-cons lists</p>
+      </header>
+      <div class="lists-container mt-8 grid grid-cols-2 gap-4">
+        <section class="list-container ---pros">
+          <header class="list__header">
+            <h2 class="text-xl font-bold mb-2">Pros</h2>
+            <form class="flex" name="add" data-parent="pros">
+              <input
+                aria-label="Item"
+                class="border p-2 flex-auto"
+                name="item"
+              />
+              <button aria-label="Add item" class="h-12 w-12 p-2 bg-gray-200">
+                <svg
+                  aria-hidden="true"
+                  class="w-full"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  />
+                </svg>
+              </button>
+            </form>
+          </header>
+          <ul class="list" id="pros"></ul>
+        </section>
+        <section class="list-container ---cons">
+          <header class="list__header">
+            <h2 class="text-xl font-bold mb-2">Cons</h2>
+            <form class="flex" name="add" data-parent="cons">
+              <input
+                aria-label="Item"
+                class="border p-2 flex-auto"
+                name="item"
+              />
+              <button aria-label="Add item" class="h-12 w-12 p-2 bg-gray-200">
+                <svg
+                  aria-hidden="true"
+                  class="w-full"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  />
+                </svg>
+              </button>
+            </form>
+          </header>
+          <ul class="list" id="cons"></ul>
+        </section>
+      </div>
+    </main>
+  </body>
+  <script src="main.js" type="module"></script>
+</html>
