@@ -5,7 +5,7 @@ type Item = {
   item: string;
 };
 
-type AppCache = {
+type Store = {
   pros: Item[];
   cons: Item[];
 };
@@ -22,22 +22,29 @@ type Lists = {
     pros: document.getElementById("pros") as HTMLOListElement,
   };
 
-  const cache: AppCache = {
+  let store: Store = {
     pros: [],
     cons: [],
   };
 
-  function updateCache() {
-    cache.pros = JSON.parse(localStorage.getItem("pros") || "[]");
-    cache.cons = JSON.parse(localStorage.getItem("cons") || "[]");
-    // Fire event?
+  const dataFromStorage = localStorage.getItem("pros-cons");
+  if (dataFromStorage) {
+    store = JSON.parse(dataFromStorage);
+  }
+
+  function copy(value: any) {
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  function syncWithStorage() {
+    localStorage.setItem("pros-cons", JSON.stringify(store));
   }
 
   function renderItems() {
-    Object.keys(cache).forEach((_type) => {
+    Object.keys(store).forEach((_type) => {
       // Somebody save me from myself
       const type = _type as Type;
-      const items = cache[type];
+      const items = store[type];
 
       lists[type].textContent = "";
       items.forEach((item) => {
@@ -79,12 +86,13 @@ type Lists = {
     });
   }
 
-  function refreshUi() {
-    updateCache();
+  function update() {
     renderItems();
+    // Now this can be parameterized
+    syncWithStorage();
   }
 
-  refreshUi();
+  update();
 
   document.querySelectorAll('form[name="add"]').forEach((form) => {
     form.addEventListener("submit", (event) => {
@@ -103,26 +111,24 @@ type Lists = {
   });
 
   function add(item: Item["item"], type: Type) {
-    const store = JSON.parse(localStorage.getItem(type) || "[]");
-    store.push({
+    store[type].push({
       id: String(new Date().getTime()).slice(-5),
       item,
     });
-    localStorage.setItem(type, JSON.stringify(store));
-    refreshUi();
+    update();
   }
 
-  function move(id: string, type: keyof AppCache, direction: "up" | "down") {
-    const store = JSON.parse(localStorage.getItem(type) || "[]") as Item[];
-    const length = store.length;
+  function move(id: string, type: keyof Store, direction: "up" | "down") {
+    const next = copy(store[type]);
+    const length = next.length;
     let index = -1;
-    for (let i = 0; i < store.length; i++) {
-      if (store[i].id === id) {
+    for (let i = 0; i < next.length; i++) {
+      if (next[i].id === id) {
         index = i;
         break;
       }
     }
-    const [item] = store.splice(index, 1);
+    const [item] = next.splice(index, 1);
     let nextIndex = index;
 
     switch (direction) {
@@ -138,17 +144,13 @@ type Lists = {
       }
     }
 
-    store.splice(nextIndex, 0, item);
-    localStorage.setItem(type, JSON.stringify(store));
-    refreshUi();
+    next.splice(nextIndex, 0, item);
+    store[type] = next;
+    update();
   }
 
   function remove(id: string, type: Type) {
-    const store = JSON.parse(localStorage.getItem(type) || "[]") as Item[];
-    localStorage.setItem(
-      type,
-      JSON.stringify(store.filter((item) => item.id !== id))
-    );
-    refreshUi();
+    store[type] = store[type].filter((item) => item.id !== id);
+    update();
   }
 })();

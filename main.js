@@ -4,20 +4,25 @@
         cons: document.getElementById("cons"),
         pros: document.getElementById("pros")
     };
-    var cache = {
+    var store = {
         pros: [],
         cons: []
     };
-    function updateCache() {
-        cache.pros = JSON.parse(localStorage.getItem("pros") || "[]");
-        cache.cons = JSON.parse(localStorage.getItem("cons") || "[]");
-        // Fire event?
+    var dataFromStorage = localStorage.getItem("pros-cons");
+    if (dataFromStorage) {
+        store = JSON.parse(dataFromStorage);
+    }
+    function copy(value) {
+        return JSON.parse(JSON.stringify(value));
+    }
+    function syncWithStorage() {
+        localStorage.setItem("pros-cons", JSON.stringify(store));
     }
     function renderItems() {
-        Object.keys(cache).forEach(function (_type) {
+        Object.keys(store).forEach(function (_type) {
             // Somebody save me from myself
             var type = _type;
-            var items = cache[type];
+            var items = store[type];
             lists[type].textContent = "";
             items.forEach(function (item) {
                 var li = document.createElement("li");
@@ -52,11 +57,12 @@
             });
         });
     }
-    function refreshUi() {
-        updateCache();
+    function update() {
         renderItems();
+        // Now this can be parameterized
+        syncWithStorage();
     }
-    refreshUi();
+    update();
     document.querySelectorAll('form[name="add"]').forEach(function (form) {
         form.addEventListener("submit", function (event) {
             event.preventDefault();
@@ -68,25 +74,23 @@
         });
     });
     function add(item, type) {
-        var store = JSON.parse(localStorage.getItem(type) || "[]");
-        store.push({
+        store[type].push({
             id: String(new Date().getTime()).slice(-5),
             item: item
         });
-        localStorage.setItem(type, JSON.stringify(store));
-        refreshUi();
+        update();
     }
     function move(id, type, direction) {
-        var store = JSON.parse(localStorage.getItem(type) || "[]");
-        var length = store.length;
+        var next = copy(store[type]);
+        var length = next.length;
         var index = -1;
-        for (var i = 0; i < store.length; i++) {
-            if (store[i].id === id) {
+        for (var i = 0; i < next.length; i++) {
+            if (next[i].id === id) {
                 index = i;
                 break;
             }
         }
-        var item = store.splice(index, 1)[0];
+        var item = next.splice(index, 1)[0];
         var nextIndex = index;
         switch (direction) {
             case "up": {
@@ -102,13 +106,12 @@
                 break;
             }
         }
-        store.splice(nextIndex, 0, item);
-        localStorage.setItem(type, JSON.stringify(store));
-        refreshUi();
+        next.splice(nextIndex, 0, item);
+        store[type] = next;
+        update();
     }
     function remove(id, type) {
-        var store = JSON.parse(localStorage.getItem(type) || "[]");
-        localStorage.setItem(type, JSON.stringify(store.filter(function (item) { return item.id !== id; })));
-        refreshUi();
+        store[type] = store[type].filter(function (item) { return item.id !== id; });
+        update();
     }
 })();
