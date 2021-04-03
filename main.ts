@@ -3,6 +3,7 @@ type Type = "pros" | "cons";
 type Item = {
   id: string;
   text: string;
+  weight: number;
 };
 
 type Store = {
@@ -47,7 +48,9 @@ type Lists = {
       const items = store[type];
 
       lists[type].textContent = "";
+      let weightTotal = 0;
       items.forEach((item) => {
+        weightTotal += item.weight || 1;
         const li = document.createElement("li");
         li.classList.add("p-2", "flex", "justify-between");
         const span = document.createElement("span");
@@ -83,6 +86,8 @@ type Lists = {
 
         lists[type].appendChild(li);
       });
+      // @ts-ignore
+      document.getElementById(`${type}-total`).textContent = weightTotal
     });
   }
 
@@ -114,6 +119,7 @@ type Lists = {
     store[type].push({
       id: String(new Date().getTime()).slice(-5),
       text,
+      weight: 1,
     });
     update();
   }

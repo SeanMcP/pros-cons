@@ -24,7 +24,9 @@
             var type = _type;
             var items = store[type];
             lists[type].textContent = "";
+            var weightTotal = 0;
             items.forEach(function (item) {
+                weightTotal += item.weight || 1;
                 var li = document.createElement("li");
                 li.classList.add("p-2", "flex", "justify-between");
                 var span = document.createElement("span");
@@ -55,6 +57,8 @@
                 controlsDiv.appendChild(deleteButton);
                 lists[type].appendChild(li);
             });
+            // @ts-ignore
+            document.getElementById(type + "-total").textContent = weightTotal;
         });
     }
     function update() {
@@ -76,7 +80,8 @@
     function add(text, type) {
         store[type].push({
             id: String(new Date().getTime()).slice(-5),
-            text: text
+            text: text,
+            weight: 1
         });
         update();
     }
