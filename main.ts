@@ -2,7 +2,7 @@ type Type = "pros" | "cons";
 
 type Item = {
   id: string;
-  item: string;
+  text: string;
 };
 
 type Store = {
@@ -51,7 +51,7 @@ type Lists = {
         const li = document.createElement("li");
         li.classList.add("p-2", "flex", "justify-between");
         const span = document.createElement("span");
-        span.textContent = item.item;
+        span.textContent = item.text;
         li.appendChild(span);
 
         const controlsDiv = document.createElement("div");
@@ -98,22 +98,22 @@ type Lists = {
     form.addEventListener("submit", (event) => {
       event.preventDefault();
 
-      const item = new FormData(event.target as HTMLFormElement).get(
-        "item"
-      ) as string;
+      const value = String(
+        new FormData(event.target as HTMLFormElement).get("item")
+      );
 
-      if (item) {
-        add(item, (form as HTMLElement).dataset.parent as Type);
+      if (value) {
+        add(value, (form as HTMLElement).dataset.parent as Type);
       }
 
       (form as HTMLFormElement).reset();
     });
   });
 
-  function add(item: Item["item"], type: Type) {
+  function add(text: Item["text"], type: Type) {
     store[type].push({
       id: String(new Date().getTime()).slice(-5),
-      item,
+      text,
     });
     update();
   }

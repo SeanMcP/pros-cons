@@ -28,7 +28,7 @@
                 var li = document.createElement("li");
                 li.classList.add("p-2", "flex", "justify-between");
                 var span = document.createElement("span");
-                span.textContent = item.item;
+                span.textContent = item.text;
                 li.appendChild(span);
                 var controlsDiv = document.createElement("div");
                 li.appendChild(controlsDiv);
@@ -66,17 +66,17 @@
     document.querySelectorAll('form[name="add"]').forEach(function (form) {
         form.addEventListener("submit", function (event) {
             event.preventDefault();
-            var item = new FormData(event.target).get("item");
-            if (item) {
-                add(item, form.dataset.parent);
+            var value = String(new FormData(event.target).get("item"));
+            if (value) {
+                add(value, form.dataset.parent);
             }
             form.reset();
         });
     });
-    function add(item, type) {
+    function add(text, type) {
         store[type].push({
             id: String(new Date().getTime()).slice(-5),
-            item: item
+            text: text
         });
         update();
     }
