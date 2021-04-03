@@ -42,15 +42,19 @@ type Lists = {
   }
 
   function renderItems() {
+    const weightTotal = {
+      pros: 0,
+      cons: 0,
+    };
     Object.keys(store).forEach((_type) => {
       // Somebody save me from myself
       const type = _type as Type;
       const items = store[type];
 
       lists[type].textContent = "";
-      let weightTotal = 0;
       items.forEach((item) => {
-        weightTotal += item.weight || 1;
+        // @ts-ignore
+        weightTotal[type] += item.weight || 1;
         const li = document.createElement("li");
         li.classList.add("p-2", "flex", "justify-between");
         const span = document.createElement("span");
@@ -59,6 +63,17 @@ type Lists = {
 
         const controlsDiv = document.createElement("div");
         li.appendChild(controlsDiv);
+
+        const weightInput = document.createElement("input");
+        weightInput.setAttribute("aria-label", "Weight");
+        weightInput.type = "number";
+        weightInput.value = String(item.weight);
+        weightInput.addEventListener("input", (event) => {
+          event.preventDefault();
+          // @ts-ignore
+          setWeight(item.id, type, Number(event.target.value));
+        });
+        controlsDiv.appendChild(weightInput);
 
         const upButton = document.createElement("button");
         upButton.textContent = "Up";
@@ -87,8 +102,24 @@ type Lists = {
         lists[type].appendChild(li);
       });
       // @ts-ignore
-      document.getElementById(`${type}-total`).textContent = weightTotal
+      document.getElementById(`${type}-total`).textContent = weightTotal[type];
     });
+    let heavier = "";
+    if (weightTotal.cons > weightTotal.pros) {
+      heavier = "cons";
+    } else if (weightTotal.cons < weightTotal.pros) {
+      heavier = "pros";
+    }
+    document.querySelectorAll(".list-container").forEach((node) => {
+      // @ts-ignore
+      node.dataset.state = node.classList.contains(`--${heavier}`)
+        ? "heavier"
+        : "";
+    });
+    if (heavier) {
+      // @ts-ignore
+      document.querySelector(`.--${heavier}`).dataset.state = "heavier";
+    }
   }
 
   function update() {
@@ -157,6 +188,19 @@ type Lists = {
 
   function remove(id: string, type: Type) {
     store[type] = store[type].filter((item) => item.id !== id);
+    update();
+  }
+
+  function setWeight(id: string, type: Type, weight: number) {
+    store[type] = store[type].map((item) => {
+      if (item.id === id) {
+        return {
+          ...item,
+          weight,
+        };
+      }
+      return item;
+    });
     update();
   }
 })();

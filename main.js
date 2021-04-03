@@ -1,3 +1,14 @@
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 (function main() {
     // Code goes here
     var lists = {
@@ -19,14 +30,18 @@
         localStorage.setItem("pros-cons", JSON.stringify(store));
     }
     function renderItems() {
+        var weightTotal = {
+            pros: 0,
+            cons: 0
+        };
         Object.keys(store).forEach(function (_type) {
             // Somebody save me from myself
             var type = _type;
             var items = store[type];
             lists[type].textContent = "";
-            var weightTotal = 0;
             items.forEach(function (item) {
-                weightTotal += item.weight || 1;
+                // @ts-ignore
+                weightTotal[type] += item.weight || 1;
                 var li = document.createElement("li");
                 li.classList.add("p-2", "flex", "justify-between");
                 var span = document.createElement("span");
@@ -34,6 +49,16 @@
                 li.appendChild(span);
                 var controlsDiv = document.createElement("div");
                 li.appendChild(controlsDiv);
+                var weightInput = document.createElement("input");
+                weightInput.setAttribute("aria-label", "Weight");
+                weightInput.type = "number";
+                weightInput.value = String(item.weight);
+                weightInput.addEventListener("input", function (event) {
+                    event.preventDefault();
+                    // @ts-ignore
+                    setWeight(item.id, type, Number(event.target.value));
+                });
+                controlsDiv.appendChild(weightInput);
                 var upButton = document.createElement("button");
                 upButton.textContent = "Up";
                 upButton.addEventListener("click", function (event) {
@@ -58,8 +83,25 @@
                 lists[type].appendChild(li);
             });
             // @ts-ignore
-            document.getElementById(type + "-total").textContent = weightTotal;
+            document.getElementById(type + "-total").textContent = weightTotal[type];
         });
+        var heavier = "";
+        if (weightTotal.cons > weightTotal.pros) {
+            heavier = "cons";
+        }
+        else if (weightTotal.cons < weightTotal.pros) {
+            heavier = "pros";
+        }
+        document.querySelectorAll(".list-container").forEach(function (node) {
+            // @ts-ignore
+            node.dataset.state = node.classList.contains("--" + heavier)
+                ? "heavier"
+                : "";
+        });
+        if (heavier) {
+            // @ts-ignore
+            document.querySelector(".--" + heavier).dataset.state = "heavier";
+        }
     }
     function update() {
         renderItems();
@@ -117,6 +159,15 @@
     }
     function remove(id, type) {
         store[type] = store[type].filter(function (item) { return item.id !== id; });
+        update();
+    }
+    function setWeight(id, type, weight) {
+        store[type] = store[type].map(function (item) {
+            if (item.id === id) {
+                return __assign(__assign({}, item), { weight: weight });
+            }
+            return item;
+        });
         update();
     }
 })();
