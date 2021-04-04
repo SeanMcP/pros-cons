@@ -41,7 +41,7 @@ var __assign = (this && this.__assign) || function () {
             lists[type].textContent = "";
             items.forEach(function (item) {
                 // @ts-ignore
-                weightTotal[type] += item.weight || 1;
+                weightTotal[type] += Number(item.weight);
                 var li = document.createElement("li");
                 li.classList.add("p-2", "flex", "justify-between");
                 var span = document.createElement("span");
@@ -93,15 +93,13 @@ var __assign = (this && this.__assign) || function () {
             heavier = "pros";
         }
         document.querySelectorAll(".list-container").forEach(function (node) {
-            // @ts-ignore
-            node.dataset.state = node.classList.contains("--" + heavier)
-                ? "heavier"
-                : "";
+            if (heavier && node.classList.contains("--" + heavier)) {
+                node.classList.add("border-green-200");
+            }
+            else {
+                node.classList.remove("border-green-200");
+            }
         });
-        if (heavier) {
-            // @ts-ignore
-            document.querySelector(".--" + heavier).dataset.state = "heavier";
-        }
     }
     function update() {
         renderItems();

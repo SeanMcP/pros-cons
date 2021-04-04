@@ -54,7 +54,7 @@ type Lists = {
       lists[type].textContent = "";
       items.forEach((item) => {
         // @ts-ignore
-        weightTotal[type] += item.weight || 1;
+        weightTotal[type] += item.weight;
         const li = document.createElement("li");
         li.classList.add("p-2", "flex", "justify-between");
         const span = document.createElement("span");
@@ -111,15 +111,20 @@ type Lists = {
       heavier = "pros";
     }
     document.querySelectorAll(".list-container").forEach((node) => {
+      if (heavier && node.classList.contains(`--${heavier}`)) {
+        node.classList.add("border-green-200");
+      } else {
+        node.classList.remove("border-green-200");
+      }
       // @ts-ignore
-      node.dataset.state = node.classList.contains(`--${heavier}`)
-        ? "heavier"
-        : "";
+      // node.dataset.state = node.classList.contains(`--${heavier}`)
+      //   ? "heavier"
+      //   : "";
     });
-    if (heavier) {
-      // @ts-ignore
-      document.querySelector(`.--${heavier}`).dataset.state = "heavier";
-    }
+    // if (heavier) {
+    //   // @ts-ignore
+    //   document.querySelector(`.--${heavier}`).dataset.state = "heavier";
+    // }
   }
 
   function update() {
