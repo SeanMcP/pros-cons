@@ -12,14 +12,22 @@
         <h1 class="text-2xl font-bold">Pros Cons</h1>
         <p class="text-gray-500">An online tool to build pros-cons lists</p>
       </header>
+      <section>
+        <label>
+          <input type="checkbox" name="auto-save" />
+          Save automatically
+        </label>
+      </section>
       <div class="lists-container mt-8 grid grid-cols-2 gap-4">
         <section class="list-container --pros p-4 border-2 rounded-lg">
           <header class="list__header">
-            <h2 class="text-xl font-bold mb-2 flex justify-between">Pros<span id="pros-total">0</span></h2>
+            <h2 class="text-xl font-bold mb-2 flex justify-between">
+              Pros<span id="pros-total">0</span>
+            </h2>
             <form class="flex" name="add" data-parent="pros">
               <input
                 aria-label="Item"
-                class="border p-2 flex-auto"
+                class="border p-2 flex-auto rounded-l-sm"
                 name="item"
               />
               <button aria-label="Add item" class="h-12 w-12 p-2 bg-gray-200">
@@ -45,11 +53,13 @@
         </section>
         <section class="list-container --cons p-4 border-2 rounded-lg">
           <header class="list__header">
-            <h2 class="text-xl font-bold mb-2 flex justify-between">Cons<span id="cons-total">0</span></h2>
+            <h2 class="text-xl font-bold mb-2 flex justify-between">
+              Cons<span id="cons-total">0</span>
+            </h2>
             <form class="flex" name="add" data-parent="cons">
               <input
                 aria-label="Item"
-                class="border p-2 flex-auto"
+                class="border p-2 flex-auto rounded-l-sm"
                 name="item"
               />
               <button aria-label="Add item" class="h-12 w-12 p-2 bg-gray-200">

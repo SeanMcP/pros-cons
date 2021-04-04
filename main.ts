@@ -7,6 +7,7 @@ type Item = {
 };
 
 type Store = {
+  autoSave: boolean;
   pros: Item[];
   cons: Item[];
 };
@@ -24,6 +25,7 @@ type Lists = {
   };
 
   let store: Store = {
+    autoSave: false,
     pros: [],
     cons: [],
   };
@@ -33,6 +35,16 @@ type Lists = {
     store = JSON.parse(dataFromStorage);
   }
 
+  document
+    .querySelector('[name="auto-save"]')
+    ?.addEventListener("change", (event) => {
+      event.preventDefault();
+
+      store.autoSave = (event.target as HTMLInputElement).checked;
+
+      attemptSync();
+    });
+
   function copy(value: any) {
     return JSON.parse(JSON.stringify(value));
   }
@@ -41,19 +53,21 @@ type Lists = {
     localStorage.setItem("pros-cons", JSON.stringify(store));
   }
 
+  function attemptSync() {
+    if (store.autoSave) syncWithStorage();
+  }
+
   function renderItems() {
     const weightTotal = {
       pros: 0,
       cons: 0,
     };
-    Object.keys(store).forEach((_type) => {
-      // Somebody save me from myself
-      const type = _type as Type;
+    const keys: Type[] = ["pros", "cons"];
+    keys.forEach((type) => {
       const items = store[type];
 
       lists[type].textContent = "";
       items.forEach((item) => {
-        // @ts-ignore
         weightTotal[type] += item.weight;
         const li = document.createElement("li");
         li.classList.add("p-2", "flex", "justify-between");
@@ -129,8 +143,7 @@ type Lists = {
 
   function update() {
     renderItems();
-    // Now this can be parameterized
-    syncWithStorage();
+    attemptSync();
   }
 
   update();

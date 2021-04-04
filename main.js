@@ -10,12 +10,14 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 (function main() {
+    var _a;
     // Code goes here
     var lists = {
         cons: document.getElementById("cons"),
         pros: document.getElementById("pros")
     };
     var store = {
+        autoSave: false,
         pros: [],
         cons: []
     };
@@ -23,25 +25,33 @@ var __assign = (this && this.__assign) || function () {
     if (dataFromStorage) {
         store = JSON.parse(dataFromStorage);
     }
+    (_a = document
+        .querySelector('[name="auto-save"]')) === null || _a === void 0 ? void 0 : _a.addEventListener("change", function (event) {
+        event.preventDefault();
+        store.autoSave = event.target.checked;
+        attemptSync();
+    });
     function copy(value) {
         return JSON.parse(JSON.stringify(value));
     }
     function syncWithStorage() {
         localStorage.setItem("pros-cons", JSON.stringify(store));
     }
+    function attemptSync() {
+        if (store.autoSave)
+            syncWithStorage();
+    }
     function renderItems() {
         var weightTotal = {
             pros: 0,
             cons: 0
         };
-        Object.keys(store).forEach(function (_type) {
-            // Somebody save me from myself
-            var type = _type;
+        var keys = ["pros", "cons"];
+        keys.forEach(function (type) {
             var items = store[type];
             lists[type].textContent = "";
             items.forEach(function (item) {
-                // @ts-ignore
-                weightTotal[type] += Number(item.weight);
+                weightTotal[type] += item.weight;
                 var li = document.createElement("li");
                 li.classList.add("p-2", "flex", "justify-between");
                 var span = document.createElement("span");
@@ -99,12 +109,19 @@ var __assign = (this && this.__assign) || function () {
             else {
                 node.classList.remove("border-green-200");
             }
+            // @ts-ignore
+            // node.dataset.state = node.classList.contains(`--${heavier}`)
+            //   ? "heavier"
+            //   : "";
         });
+        // if (heavier) {
+        //   // @ts-ignore
+        //   document.querySelector(`.--${heavier}`).dataset.state = "heavier";
+        // }
     }
     function update() {
         renderItems();
-        // Now this can be parameterized
-        syncWithStorage();
+        attemptSync();
     }
     update();
     document.querySelectorAll('form[name="add"]').forEach(function (form) {
