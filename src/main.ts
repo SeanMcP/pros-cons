@@ -147,15 +147,7 @@ function renderItems() {
     } else {
       node.classList.remove("border-green-200");
     }
-    // @ts-ignore
-    // node.dataset.state = node.classList.contains(`--${heavier}`)
-    //   ? "heavier"
-    //   : "";
   });
-  // if (heavier) {
-  //   // @ts-ignore
-  //   document.querySelector(`.--${heavier}`).dataset.state = "heavier";
-  // }
 }
 
 function update(forceSync = false) {
