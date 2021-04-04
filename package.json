@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "build": "NODE_ENV=production postcss styles.css -o compiled.css && esbuild main.ts --bundle --minify --outfile=bundle.js",
+    "build": "NODE_ENV=production postcss styles.css -o build/compiled.css && esbuild main.ts --bundle --minify --outfile=build/bundle.js && cp index.html build/index.html",
     "dev:postcss": "postcss styles.css -o compiled.css",
     "dev:bundle": "esbuild main.ts --bundle --sourcemap --outfile=bundle.js --watch",
     "dev:serve": "reload -b -p 3039",
