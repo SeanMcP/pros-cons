@@ -10,7 +10,7 @@
     "prod:js": "esbuild src/main.ts --bundle --minify --outfile=build/bundle.js",
     "start": "NODE_ENV=development npm-run-all --parallel dev:*",
     "dev:css": "postcss src/styles.css --output build/compiled.css --watch",
-    "dev:html": "cp src/index.html build/index.html",
+    "dev:html": "watchlist src/index.html -- cp src/index.html build/index.html",
     "dev:js": "esbuild src/main.ts --bundle --sourcemap --outfile=build/bundle.js --servedir=build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,7 +23,8 @@
     "npm-run-all": "^4.1.5",
     "postcss": "^8.2.6",
     "postcss-cli": "^8.3.1",
-    "tailwindcss": "^2.0.3"
+    "tailwindcss": "^2.0.3",
+    "watchlist": "^0.2.3"
   },
   "dependencies": {}
 }
