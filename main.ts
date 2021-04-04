@@ -24,11 +24,13 @@ type Lists = {
     pros: document.getElementById("pros") as HTMLOListElement,
   };
 
-  let store: Store = {
+  const initialState: Readonly<Store> = {
     autoSave: false,
     pros: [],
     cons: [],
   };
+
+  let store: Store = copy(initialState);
 
   const dataFromStorage = localStorage.getItem("pros-cons");
   if (dataFromStorage) {
@@ -45,6 +47,27 @@ type Lists = {
       attemptSync();
     });
 
+  document.getElementById("save")?.addEventListener("click", (event) => {
+    event.preventDefault();
+
+    syncWithStorage();
+  });
+
+  document
+    .getElementById("factory-reset")
+    ?.addEventListener("click", (event) => {
+      event.preventDefault();
+
+      if (
+        confirm(
+          "Do you want to reset your pros/cons list? This cannot be undone."
+        )
+      ) {
+        store = copy(initialState);
+        update(true);
+      }
+    });
+
   function copy(value: any) {
     return JSON.parse(JSON.stringify(value));
   }
@@ -53,8 +76,8 @@ type Lists = {
     localStorage.setItem("pros-cons", JSON.stringify(store));
   }
 
-  function attemptSync() {
-    if (store.autoSave) syncWithStorage();
+  function attemptSync(forceSync = false) {
+    if (forceSync || store.autoSave) syncWithStorage();
   }
 
   function renderItems() {
@@ -141,9 +164,9 @@ type Lists = {
     // }
   }
 
-  function update() {
+  function update(forceSync = false) {
     renderItems();
-    attemptSync();
+    attemptSync(forceSync);
   }
 
   update();

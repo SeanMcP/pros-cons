@@ -10,17 +10,18 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 (function main() {
-    var _a;
+    var _a, _b, _c;
     // Code goes here
     var lists = {
         cons: document.getElementById("cons"),
         pros: document.getElementById("pros")
     };
-    var store = {
+    var initialState = {
         autoSave: false,
         pros: [],
         cons: []
     };
+    var store = copy(initialState);
     var dataFromStorage = localStorage.getItem("pros-cons");
     if (dataFromStorage) {
         store = JSON.parse(dataFromStorage);
@@ -31,14 +32,27 @@ var __assign = (this && this.__assign) || function () {
         store.autoSave = event.target.checked;
         attemptSync();
     });
+    (_b = document.getElementById("save")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", function (event) {
+        event.preventDefault();
+        syncWithStorage();
+    });
+    (_c = document
+        .getElementById("factory-reset")) === null || _c === void 0 ? void 0 : _c.addEventListener("click", function (event) {
+        event.preventDefault();
+        if (confirm("Do you want to reset your pros/cons list? This cannot be undone.")) {
+            store = copy(initialState);
+            update(true);
+        }
+    });
     function copy(value) {
         return JSON.parse(JSON.stringify(value));
     }
     function syncWithStorage() {
         localStorage.setItem("pros-cons", JSON.stringify(store));
     }
-    function attemptSync() {
-        if (store.autoSave)
+    function attemptSync(forceSync) {
+        if (forceSync === void 0) { forceSync = false; }
+        if (forceSync || store.autoSave)
             syncWithStorage();
     }
     function renderItems() {
@@ -119,9 +133,10 @@ var __assign = (this && this.__assign) || function () {
         //   document.querySelector(`.--${heavier}`).dataset.state = "heavier";
         // }
     }
-    function update() {
+    function update(forceSync) {
+        if (forceSync === void 0) { forceSync = false; }
         renderItems();
-        attemptSync();
+        attemptSync(forceSync);
     }
     update();
     document.querySelectorAll('form[name="add"]').forEach(function (form) {

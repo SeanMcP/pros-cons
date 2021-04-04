@@ -551,11 +551,6 @@ video {
   height: auto;
 }
 
-.list-container[data-state="heavier"] {
-  outline: 4px solid hsl(120, 48%, 71%);
-  outline-offset: 4px;
-}
-
 .container {
   width: 100%;
 }
